@@ -53,8 +53,7 @@ jobs:
           flavor: |
             latest=true
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=${{ env.VERSION }}
             type=sha,prefix=sha-,enable=${{ github.event_name == 'workflow_dispatch' }}
           labels: |
             org.opencontainers.image.title=${{ env.CONTAINER_NAME }}
