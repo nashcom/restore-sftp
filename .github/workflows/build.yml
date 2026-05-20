@@ -25,6 +25,7 @@ jobs:
       - name: Load container metadata
         run: |
           . ./container.env
+          echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
           echo "BUILDTIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
           echo "CONTAINER_MAINTAINER=$CONTAINER_MAINTAINER" >> $GITHUB_ENV
           echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
@@ -64,7 +65,7 @@ jobs:
             vendor=${{ env.CONTAINER_VENDOR }}
             description=${{ env.CONTAINER_DESCRIPTION }}
             summary=${{ env.CONTAINER_DESCRIPTION }}
-            version=${{ steps.meta.outputs.version }}
+            version=${{ env.VERSION }}
             buildtime=${{ env.BUILDTIME }}
             release=${{ env.BUILDTIME }}
             architecture=x86_64

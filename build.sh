@@ -13,7 +13,7 @@ CONTAINER_IMAGE=restore-sftp
 . ./container.env
 
 BUILDTIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-VERSION=$(git describe --tags --always 2>/dev/null || echo "dev")
+VERSION=$(cat version.txt)
 
 print_delim()
 {
