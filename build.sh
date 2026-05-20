@@ -10,6 +10,11 @@ BASE_IMAGE=alpine
 IMAGE_VARIANT=Alpine
 CONTAINER_IMAGE=restore-sftp
 
+. ./container.env
+
+BUILDTIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+VERSION=$(git describe --tags --always 2>/dev/null || echo "dev")
+
 print_delim()
 {
   echo "--------------------------------------------------------------------------------"
@@ -81,6 +86,27 @@ header "Building Restore SFTP image [$IMAGE_VARIANT]"
   --no-cache \
   --progress=plain \
   --build-arg BASE_IMAGE="$BASE_IMAGE" \
+  --label maintainer="$CONTAINER_MAINTAINER" \
+  --label name="$CONTAINER_NAME" \
+  --label vendor="$CONTAINER_VENDOR" \
+  --label description="$CONTAINER_DESCRIPTION" \
+  --label summary="$CONTAINER_DESCRIPTION" \
+  --label version="$VERSION" \
+  --label buildtime="$BUILDTIME" \
+  --label release="$BUILDTIME" \
+  --label architecture="x86_64" \
+  --label org.opencontainers.image.title="$CONTAINER_NAME" \
+  --label org.opencontainers.image.description="$CONTAINER_DESCRIPTION" \
+  --label org.opencontainers.image.vendor="$CONTAINER_VENDOR" \
+  --label org.opencontainers.image.version="$VERSION" \
+  --label org.opencontainers.image.created="$BUILDTIME" \
+  --label io.k8s.description="$CONTAINER_DESCRIPTION" \
+  --label io.k8s.display-name="$CONTAINER_NAME" \
+  --label io.openshift.tags="sftp,restore" \
+  --label io.openshift.expose-services="$CONTAINER_OPENSHIFT_EXPOSE_SERVICES" \
+  --label io.openshift.non-scalable=true \
+  --label io.openshift.min-memory="$CONTAINER_OPENSHIFT_MIN_MEMORY" \
+  --label io.openshift.min-cpu="$CONTAINER_OPENSHIFT_MIN_CPU" \
   -t "$CONTAINER_IMAGE_NAME" \
   .
 

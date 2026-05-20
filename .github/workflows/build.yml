@@ -22,6 +22,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Load container metadata
+        run: |
+          . ./container.env
+          echo "BUILDTIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+          echo "CONTAINER_MAINTAINER=$CONTAINER_MAINTAINER" >> $GITHUB_ENV
+          echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
+          echo "CONTAINER_VENDOR=$CONTAINER_VENDOR" >> $GITHUB_ENV
+          echo "CONTAINER_DESCRIPTION=$CONTAINER_DESCRIPTION" >> $GITHUB_ENV
+          echo "CONTAINER_OPENSHIFT_EXPOSE_SERVICES=$CONTAINER_OPENSHIFT_EXPOSE_SERVICES" >> $GITHUB_ENV
+          echo "CONTAINER_OPENSHIFT_MIN_MEMORY=$CONTAINER_OPENSHIFT_MIN_MEMORY" >> $GITHUB_ENV
+          echo "CONTAINER_OPENSHIFT_MIN_CPU=$CONTAINER_OPENSHIFT_MIN_CPU" >> $GITHUB_ENV
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -44,9 +56,25 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix=sha-,enable=${{ github.event_name == 'workflow_dispatch' }}
           labels: |
-            org.opencontainers.image.title=restore-sftp
-            org.opencontainers.image.description=Secure SFTP container for Kubernetes restore operations
-            org.opencontainers.image.vendor=Nash!Com
+            org.opencontainers.image.title=${{ env.CONTAINER_NAME }}
+            org.opencontainers.image.description=${{ env.CONTAINER_DESCRIPTION }}
+            org.opencontainers.image.vendor=${{ env.CONTAINER_VENDOR }}
+            maintainer=${{ env.CONTAINER_MAINTAINER }}
+            name=${{ env.CONTAINER_NAME }}
+            vendor=${{ env.CONTAINER_VENDOR }}
+            description=${{ env.CONTAINER_DESCRIPTION }}
+            summary=${{ env.CONTAINER_DESCRIPTION }}
+            version=${{ steps.meta.outputs.version }}
+            buildtime=${{ env.BUILDTIME }}
+            release=${{ env.BUILDTIME }}
+            architecture=x86_64
+            io.k8s.description=${{ env.CONTAINER_DESCRIPTION }}
+            io.k8s.display-name=${{ env.CONTAINER_NAME }}
+            io.openshift.tags=sftp,restore
+            io.openshift.expose-services=${{ env.CONTAINER_OPENSHIFT_EXPOSE_SERVICES }}
+            io.openshift.non-scalable=true
+            io.openshift.min-memory=${{ env.CONTAINER_OPENSHIFT_MIN_MEMORY }}
+            io.openshift.min-cpu=${{ env.CONTAINER_OPENSHIFT_MIN_CPU }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
