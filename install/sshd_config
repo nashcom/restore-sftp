@@ -1,0 +1,28 @@
+Port 2222
+Protocol 2
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+ChallengeResponseAuthentication no
+
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+
+AllowTcpForwarding no
+AllowAgentForwarding no
+PermitTunnel no
+X11Forwarding no
+
+PermitTTY no
+PrintMotd no
+
+Subsystem sftp internal-sftp
+
+Match all 
+    ChrootDirectory /sftp
+    ForceCommand internal-sftp
+    AllowTcpForwarding no
+    X11Forwarding no
+    PermitTTY no
